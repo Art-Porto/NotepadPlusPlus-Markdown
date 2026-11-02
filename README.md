@@ -16,6 +16,7 @@ Live preview + full reading mode, native on <b>ARM64</b> and <b>x64</b>.</h3>
 [![License: GPL-3.0](https://img.shields.io/badge/License-GPL--3.0-blue?style=for-the-badge)](LICENSE)
 
 [![Downloads](https://img.shields.io/github/downloads/rsalinger/NotepadPlusPlus-Markdown/total?style=flat-square&color=8957e5)](https://github.com/rsalinger/NotepadPlusPlus-Markdown/releases)
+[![CI](https://img.shields.io/github/actions/workflow/status/rsalinger/NotepadPlusPlus-Markdown/CI_build.yml?branch=main&style=flat-square&logo=githubactions&logoColor=white&label=CI)](https://github.com/rsalinger/NotepadPlusPlus-Markdown/actions/workflows/CI_build.yml)
 [![Last commit](https://img.shields.io/github/last-commit/rsalinger/NotepadPlusPlus-Markdown?style=flat-square)](https://github.com/rsalinger/NotepadPlusPlus-Markdown/commits/main)
 [![Markdown](https://img.shields.io/badge/markdown-it%2015-000000?style=flat-square&logo=markdown)](https://github.com/markdown-it/markdown-it)
 [![Mermaid](https://img.shields.io/badge/Mermaid-12-ff3670?style=flat-square&logo=mermaid&logoColor=white)](https://mermaid.js.org/)
@@ -198,10 +199,11 @@ Built with MSVC for **ARM64** and **x64** (x86 builds too), statically linked: n
 > minutes, and every download includes these steps as `INSTALL.txt`.
 
 > [!NOTE]
-> **Coming to Plugins Admin.** MarkdownReader has been
-> [submitted](https://github.com/notepad-plus-plus/nppPluginList/pull/1223) to Notepad++'s official plugin list. Once
-> it's accepted and included in a Notepad++ update, you'll be able to install it from **Plugins → Plugins Admin**
-> (search for *MarkdownReader*, tick it, click **Install**) with no manual steps. Until then, use the steps below.
+> **Accepted into Plugins Admin.** MarkdownReader is now in Notepad++'s
+> [official plugin list](https://github.com/notepad-plus-plus/nppPluginList/pull/1223) (Plugin List v2.0). It
+> arrives with the next Notepad++ update after 8.9.8.1, and then you can install it from **Plugins → Plugins Admin**
+> (search for *MarkdownReader*, tick it, click **Install**) with no manual steps. If your Notepad++ doesn't list it
+> yet, use the steps below.
 
 **You'll need:** Notepad++ **8.7.7 or newer** and the Microsoft Edge **WebView2 Runtime** (already part of
 Windows 11; on Windows 10 it comes with Edge).
@@ -346,7 +348,8 @@ scripts\package.ps1
 ```
 
 **Tests:** `cd web; npm test` (renderer, sanitizer XSS corpus, scroll-sync math) and
-`build\Debug\ARM64\NativeTests.exe` (URL mapping, link policy, messages, clipboard).
+`build\Debug\ARM64\NativeTests.exe` (URL mapping, link policy, messages, clipboard). GitHub Actions runs both on
+every push and pull request.
 
 **Preview page without Notepad++:** `cd web; npm run build:dev; node dev/serve.mjs`, then open
 `http://localhost:5178/?file=sample.md`. A `devHost` object in the console plays the plugin's part.
@@ -367,11 +370,12 @@ scripts\package.ps1
 ## <img src="docs/assets/icons/map.svg" width="30" height="30" alt=""> Roadmap
 
 - [x] **v0.1:** live preview, reading mode, scroll sync, Mermaid, dark mode, native ARM64 + x64
-- [ ] **Plugins Admin** listing: [submitted](https://github.com/notepad-plus-plus/nppPluginList/pull/1223), waiting
-  for review and the next Notepad++ release
+- [x] **Plugins Admin** listing: [accepted](https://github.com/notepad-plus-plus/nppPluginList/pull/1223) in Plugin
+  List v2.0, available with the next Notepad++ release
+- [x] CI on GitHub Actions: ARM64, x64 and x86 builds plus the web and native tests (thanks to
+  [chcg](https://github.com/chcg))
 - [ ] Hands-on verification of export, print, links and shortcuts → **v0.2**
 - [ ] Toolbar buttons, a settings dialog and an x86 release
-- [ ] CI builds on GitHub Actions (ARM64 runners included)
 - [ ] Native Markdown syntax highlighting with its own *Language* menu entry
 - [ ] Ideas welcome: open an issue!
 
