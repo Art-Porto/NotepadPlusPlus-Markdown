@@ -80,7 +80,7 @@ New-Item -ItemType Directory -Force -Path $out | Out-Null
 & $msbuild (Join-Path $root 'MarkdownReader.sln') -t:restore -p:RestorePackagesConfig=true -nologo -v:quiet
 $hashes = @()
 foreach ($p in $Platform) {
-    & $msbuild (Join-Path $root 'MarkdownReader.sln') -p:Configuration=Release "-p:Platform=$(if ($p -eq 'Win32') { 'x86' } else { $p })" -nologo -v:minimal -m
+    & $msbuild (Join-Path $root 'MarkdownReader.sln') -p:Configuration=Release "-p:Platform=$p" -nologo -v:minimal -m
     if ($LASTEXITCODE -ne 0) { throw "Native build failed for $p." }
 
     $arch = @{ ARM64 = 'arm64'; x64 = 'x64'; Win32 = 'x86' }[$p]
