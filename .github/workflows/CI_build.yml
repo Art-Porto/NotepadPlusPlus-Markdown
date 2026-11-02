@@ -3,6 +3,33 @@ name: CI_build
 on: [push, pull_request]
 
 jobs:
+  web:
+
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: web
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v7
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v7
+      with:
+        node-version: 22
+        cache: npm
+        cache-dependency-path: web/package-lock.json
+
+    - name: Install preview page dependencies
+      run: npm ci
+
+    - name: Web tests (renderer, sanitizer XSS corpus, scroll sync)
+      run: npm test
+
+    - name: Build preview page
+      run: npm run build
+
   build:
 
     runs-on: windows-latest
@@ -35,6 +62,13 @@ jobs:
       run: |
            msbuild ${{ env.Projectname }}.sln  /p:configuration=Release /p:platform="${{ matrix.build_platform }}"
 
+    # The x64 runner can't execute ARM64 binaries, so arm64 is build-only here.
+    - name: Native tests Release
+      if: matrix.build_platform != 'arm64'
+      working-directory: .\
+      run: |
+           .\build\Release\${{ matrix.build_platform }}\NativeTests.exe
+
     - uses: olegtarasov/get-tag@v2.1.4
       id: tagName
 
@@ -48,8 +82,5 @@ jobs:
         name: ${{ env.Projectname }}_${{ steps.tagName.outputs.tag }}_${{ matrix.build_platform }}.zip
         path: ${{ env.Projectname }}_${{ steps.tagName.outputs.tag }}_${{ matrix.build_platform }}.zip
 
-    - name: Create release on tagging
-      uses: softprops/action-gh-release@v3
-      if: startsWith(github.ref, 'refs/tags/')
-      with:
-        files: ${{ env.Projectname }}_${{ steps.tagName.outputs.tag }}_${{ matrix.build_platform }}.zip
+    # No release step: these zips hold only the DLL. Release zips (DLL + web\ + notices) come from
+    # scripts\package.ps1, and Plugins Admin pins their SHA-256s.
