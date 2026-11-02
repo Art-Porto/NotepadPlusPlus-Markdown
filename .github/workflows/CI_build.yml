@@ -34,7 +34,9 @@ jobs:
 
     runs-on: windows-latest
     env:
-      Projectname: MarkdownReader
+      # Not "ProjectName": MSBuild reads env vars as properties (case-insensitively), and that one
+      # would rename every project's output, so NativeTests.exe became MarkdownReader.exe.
+      PLUGIN_NAME: MarkdownReader
     strategy:
       fail-fast: false
       matrix:
@@ -50,17 +52,17 @@ jobs:
     - name: MSBuild for nuget package restore
       working-directory: .\
       run: |
-           msbuild ${{ env.Projectname }}.sln -t:restore -p:RestorePackagesConfig=true
+           msbuild ${{ env.PLUGIN_NAME }}.sln -t:restore -p:RestorePackagesConfig=true
 
     - name: MSBuild of plugin dll Debug
       working-directory: .\
       run: |
-           msbuild ${{ env.Projectname }}.sln  /p:configuration=Debug /p:platform="${{ matrix.build_platform }}"
+           msbuild ${{ env.PLUGIN_NAME }}.sln  /p:configuration=Debug /p:platform="${{ matrix.build_platform }}"
 
     - name: MSBuild of plugin dll Release
       working-directory: .\
       run: |
-           msbuild ${{ env.Projectname }}.sln  /p:configuration=Release /p:platform="${{ matrix.build_platform }}"
+           msbuild ${{ env.PLUGIN_NAME }}.sln  /p:configuration=Release /p:platform="${{ matrix.build_platform }}"
 
     # The x64 runner can't execute ARM64 binaries, so arm64 is build-only here.
     - name: Native tests Release
@@ -74,13 +76,13 @@ jobs:
 
     - name: zip artifacts for Release ${{ matrix.build_platform }}
       run: |
-           7z a ${{ env.Projectname }}_${{ steps.tagName.outputs.tag }}_${{ matrix.build_platform }}.zip .\build\Release\${{ matrix.build_platform }}\${{ env.Projectname }}.dll
+           7z a ${{ env.PLUGIN_NAME }}_${{ steps.tagName.outputs.tag }}_${{ matrix.build_platform }}.zip .\build\Release\${{ matrix.build_platform }}\${{ env.PLUGIN_NAME }}.dll
 
     - name: Archive artifacts for Release ${{ matrix.build_platform }}
       uses: actions/upload-artifact@v7
       with:
-        name: ${{ env.Projectname }}_${{ steps.tagName.outputs.tag }}_${{ matrix.build_platform }}.zip
-        path: ${{ env.Projectname }}_${{ steps.tagName.outputs.tag }}_${{ matrix.build_platform }}.zip
+        name: ${{ env.PLUGIN_NAME }}_${{ steps.tagName.outputs.tag }}_${{ matrix.build_platform }}.zip
+        path: ${{ env.PLUGIN_NAME }}_${{ steps.tagName.outputs.tag }}_${{ matrix.build_platform }}.zip
 
     # No release step: these zips hold only the DLL. Release zips (DLL + web\ + notices) come from
     # scripts\package.ps1, and Plugins Admin pins their SHA-256s.
