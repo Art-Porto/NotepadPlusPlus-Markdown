@@ -32,7 +32,8 @@ jobs:
 
   build:
 
-    runs-on: windows-latest
+    # arm64 runs on a native Windows 11 Arm64 runner so its tests can execute.
+    runs-on: ${{ matrix.build_platform == 'arm64' && 'windows-11-arm' || 'windows-latest' }}
     env:
       # Not "ProjectName": MSBuild reads env vars as properties (case-insensitively), and that one
       # would rename every project's output, so NativeTests.exe became MarkdownReader.exe.
@@ -64,9 +65,7 @@ jobs:
       run: |
            msbuild ${{ env.PLUGIN_NAME }}.sln  /p:configuration=Release /p:platform="${{ matrix.build_platform }}"
 
-    # The x64 runner can't execute ARM64 binaries, so arm64 is build-only here.
     - name: Native tests Release
-      if: matrix.build_platform != 'arm64'
       working-directory: .\
       run: |
            .\build\Release\${{ matrix.build_platform }}\NativeTests.exe
