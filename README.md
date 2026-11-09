@@ -263,6 +263,8 @@ Windows 11; on Windows 10 it comes with Edge).
 ## <img src="docs/assets/icons/keyboard.svg" width="30" height="30" alt=""> Using it
 
 Everything lives under **Plugins → MarkdownReader**. Bind any of these to keys in *Settings → Shortcut Mapper*.
+The toolbar also has separate buttons for **Toggle Reading Mode** and **Toggle Preview Panel**.
+Both modes can be active at the same time.
 
 | Command | What it does |
 |---|---|
@@ -375,7 +377,7 @@ every push and pull request.
 - [x] CI on GitHub Actions: ARM64, x64 and x86 builds plus the web and native tests (thanks to
   [chcg](https://github.com/chcg))
 - [ ] Hands-on verification of export, print, links and shortcuts → **v0.2**
-- [ ] Toolbar buttons, a settings dialog and an x86 release
+- [ ] A settings dialog and an x86 release
 - [ ] Native Markdown syntax highlighting with its own *Language* menu entry
 - [ ] Ideas welcome: open an issue!
 

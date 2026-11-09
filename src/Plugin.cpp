@@ -216,6 +216,23 @@ void Plugin::OnNotification(SCNotification* notification) {
     const auto& header = notification->nmhdr;
     if (header.hwndFrom == npp::Window()) {
       switch (header.code) {
+        case NPPN_TBMODIFICATION: {
+          // Notepad++ retains the image handles for the lifetime of the toolbar.
+          static const wil::unique_hbitmap readingBitmap(::LoadBitmapW(module_, MAKEINTRESOURCEW(IDB_READING_MODE)));
+          static const wil::unique_hbitmap panelBitmap(::LoadBitmapW(module_, MAKEINTRESOURCEW(IDB_PREVIEW_PANEL)));
+          const auto addButton = [this](Command command, HBITMAP bitmap, int icon, int darkIcon) {
+            toolbarIconsWithDarkMode icons{
+                bitmap,
+                ::LoadIconW(module_, MAKEINTRESOURCEW(icon)),
+                ::LoadIconW(module_, MAKEINTRESOURCEW(darkIcon)),
+            };
+            ::SendMessageW(npp::Window(), NPPM_ADDTOOLBARICON_FORDARKMODE, commands_[command]._cmdID,
+                           reinterpret_cast<LPARAM>(&icons));
+          };
+          addButton(kCmdReading, readingBitmap.get(), IDI_READING_MODE, IDI_READING_MODE_DARK);
+          addButton(kCmdPanel, panelBitmap.get(), IDI_PREVIEW_PANEL, IDI_PREVIEW_PANEL_DARK);
+          break;
+        }
         case NPPN_READY: OnReady(); break;
         case NPPN_SHUTDOWN: OnShutdown(); break;
         case NPPN_BUFFERACTIVATED:
